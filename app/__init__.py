@@ -1,1 +1,0 @@
-# Visitor Entry Management System

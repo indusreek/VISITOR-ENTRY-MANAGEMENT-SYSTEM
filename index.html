@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Visitor Management System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Animated Background -->
+    <div class="background-decoration decoration-one"></div>
+    <div class="background-decoration decoration-two"></div>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <span>V</span>
+            </div>
+
+            <div class="logo-text">
+                <h2>VisitorMS</h2>
+                <span>College Management</span>
+            </div>
+
+        </div>
+
+
+        <div class="nav-section">
+
+            <p class="nav-title">MAIN MENU</p>
+
+            <button class="nav-item active" data-section="dashboard">
+                <span class="nav-icon">⌂</span>
+                <span>Dashboard</span>
+            </button>
+
+            <button class="nav-item" data-section="register">
+                <span class="nav-icon">＋</span>
+                <span>Register Visitor</span>
+            </button>
+
+            <button class="nav-item" data-section="records">
+                <span class="nav-icon">▤</span>
+                <span>Visitor Records</span>
+            </button>
+
+            <button class="nav-item" data-section="log">
+                <span class="nav-icon">◷</span>
+                <span>Visitor Log</span>
+            </button>
+
+            <button class="nav-item" data-section="search">
+                <span class="nav-icon">⌕</span>
+                <span>Search Visitors</span>
+            </button>
+
+        </div>
+
+
+        <!-- Sidebar Bottom -->
+
+        <div class="sidebar-footer">
+
+            <div class="sidebar-user">
+
+                <div class="avatar sidebar-avatar">
+                    CS
+                </div>
+
+                <div class="sidebar-user-details">
+                    <strong>College Staff</strong>
+                    <span>Authorized User</span>
+                </div>
+
+                <span class="online-dot"></span>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <button class="menu-button" id="menuButton">
+                ☰
+            </button>
+
+
+            <div class="header-left">
+
+                <div class="header-icon">
+                    ◉
+                </div>
+
+                <div>
+                    <span class="header-small">
+                        COLLEGE VISITOR MANAGEMENT
+                    </span>
+
+                    <p>
+                        Visitor Management System
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="profile-area">
+
+                <div class="profile-details">
+                    <strong>College Staff</strong>
+                    <span>Authorized User</span>
+                </div>
+
+                <div class="avatar">
+                    CS
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= PAGE CONTENT ================= -->
+
+        <div class="page-content">
+
+
+            <!-- ================= DASHBOARD ================= -->
+
+            <section class="page-section active" id="dashboard">
+
+
+                <!-- Dashboard Heading -->
+
+                <div class="dashboard-heading">
+
+                    <div>
+
+                        <span class="welcome-label">
+                            WELCOME BACK
+                        </span>
+
+                        <h1>
+                            Visitor Dashboard
+                        </h1>
+
+                        <p>
+                            Monitor and manage visitor records from one place.
+                        </p>
+
+                    </div>
+
+
+                    <button class="primary-button" data-go="register">
+
+                        <span class="button-icon">＋</span>
+
+                        Register Visitor
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- Dashboard Hero -->
+
+                <div class="dashboard-hero">
+
+                    <div class="hero-content">
+
+                        <span class="hero-label">
+                            VISITOR MANAGEMENT
+                        </span>
+
+                        <h2>
+                            Manage your college visitors
+                            <br>
+                            <span>efficiently & securely.</span>
+                        </h2>
+
+                        <p>
+                            Keep visitor information organized and
+                            monitor entry and exit records easily.
+                        </p>
+
+                        <button
+                            class="hero-button"
+                            data-go="records">
+
+                            View Visitor Records
+                            <span>→</span>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- Animated Illustration -->
+
+                    <div class="visitor-illustration">
+
+                        <div class="illustration-circle circle-one"></div>
+                        <div class="illustration-circle circle-two"></div>
+
+                        <div class="building">
+
+                            <div class="building-roof"></div>
+
+                            <div class="building-body">
+
+                                <div class="building-window"></div>
+                                <div class="building-window"></div>
+                                <div class="building-window"></div>
+
+                                <div class="building-door"></div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Person -->
+
+                        <div class="person person-one">
+
+                            <div class="person-head"></div>
+
+                            <div class="person-body"></div>
+
+                        </div>
+
+
+                        <div class="person person-two">
+
+                            <div class="person-head"></div>
+
+                            <div class="person-body"></div>
+
+                        </div>
+
+
+                        <!-- Floating Cards -->
+
+                        <div class="floating-card floating-card-one">
+
+                            <span class="floating-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>Visitor Checked In</strong>
+                                <small>Just now</small>
+                            </div>
+
+                        </div>
+
+
+                        <div class="floating-card floating-card-two">
+
+                            <span class="floating-icon">
+                                +
+                            </span>
+
+                            <div>
+                                <strong>New Visitor</strong>
+                                <small>Registered</small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SUMMARY CARDS -->
+
+                <div class="summary-grid">
+
+
+                    <div class="summary-card card-blue">
+
+                        <div class="summary-top">
+
+                            <div class="summary-icon">
+                                ◉
+                            </div>
+
+                            <span class="card-label">
+                                TOTAL VISITORS
+                            </span>
+
+                        </div>
+
+                        <div class="summary-bottom">
+
+                            <h2 id="totalVisitors">
+                                6
+                            </h2>
+
+                            <span class="card-description">
+                                Visitor records
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="summary-card card-green">
+
+                        <div class="summary-top">
+
+                            <div class="summary-icon">
+                                ↗
+                            </div>
+
+                            <span class="card-label">
+                                CHECKED IN
+                            </span>
+
+                        </div>
+
+                        <div class="summary-bottom">
+
+                            <h2 id="checkedIn">
+                                2
+                            </h2>
+
+                            <span class="card-description">
+                                Currently inside
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="summary-card card-orange">
+
+                        <div class="summary-top">
+
+                            <div class="summary-icon">
+                                ↙
+                            </div>
+
+                            <span class="card-label">
+                                CHECKED OUT
+                            </span>
+
+                        </div>
+
+                        <div class="summary-bottom">
+
+                            <h2 id="checkedOut">
+                                4
+                            </h2>
+
+                            <span class="card-description">
+                                Exit recorded
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="summary-card card-purple">
+
+                        <div class="summary-top">
+
+                            <div class="summary-icon">
+                                ◷
+                            </div>
+
+                            <span class="card-label">
+                                TODAY'S RECORDS
+                            </span>
+
+                        </div>
+
+                        <div class="summary-bottom">
+
+                            <h2 id="todayVisitors">
+                                4
+                            </h2>
+
+                            <span class="card-description">
+                                Today's visitors
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECENT VISITORS -->
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <div class="section-title-row">
+
+                                <div class="section-title-icon">
+                                    ▤
+                                </div>
+
+                                <div>
+
+                                    <h2>
+                                        Recent Visitor Records
+                                    </h2>
+
+                                    <p>
+                                        Recently recorded visitor information
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="view-all-button"
+                            data-go="records">
+
+                            View All
+                            <span>→</span>
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>VISITOR</th>
+                                    <th>PURPOSE</th>
+                                    <th>DATE</th>
+                                    <th>CHECK-IN</th>
+                                    <th>CHECK-OUT</th>
+                                    <th>STATUS</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="dashboardTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= REGISTER ================= -->
+
+            <section class="page-section" id="register">
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="page-label">
+                            VISITOR MANAGEMENT
+                        </span>
+
+                        <h1>Register Visitor</h1>
+
+                        <p>
+                            Enter and store visitor details.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="content-card form-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <div class="section-title-row">
+
+                                <div class="section-title-icon">
+                                    ＋
+                                </div>
+
+                                <div>
+
+                                    <h2>
+                                        Visitor Information
+                                    </h2>
+
+                                    <p>
+                                        Enter the visitor details below.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form id="visitorForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label for="visitorName">
+                                    Visitor Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="visitorName"
+                                    placeholder="Enter visitor name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="phone">
+                                    Contact Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    placeholder="Enter contact number"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="purpose">
+                                    Purpose of Visit
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="purpose"
+                                    placeholder="Enter purpose"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="date">
+                                    Visit Date
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="date"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <button
+                                type="reset"
+                                class="secondary-button">
+
+                                Clear
+
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="primary-button">
+
+                                Register Visitor
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= RECORDS ================= -->
+
+            <section class="page-section" id="records">
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="page-label">
+                            VISITOR MANAGEMENT
+                        </span>
+
+                        <h1>Visitor Records</h1>
+
+                        <p>
+                            View and manage stored visitor information.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="primary-button"
+                        data-go="register">
+
+                        ＋ Register Visitor
+
+                    </button>
+
+                </div>
+
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                All Visitor Records
+                            </h2>
+
+                            <p>
+                                Stored visitor information
+                            </p>
+
+                        </div>
+
+
+                        <div class="table-search">
+
+                            <span>⌕</span>
+
+                            <input
+                                type="text"
+                                id="recordSearch"
+                                placeholder="Search records..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>VISITOR</th>
+                                    <th>CONTACT</th>
+                                    <th>PURPOSE</th>
+                                    <th>DATE</th>
+                                    <th>CHECK-IN</th>
+                                    <th>CHECK-OUT</th>
+                                    <th>ACTION</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="recordsTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= LOG ================= -->
+
+            <section class="page-section" id="log">
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="page-label">
+                            VISITOR MANAGEMENT
+                        </span>
+
+                        <h1>Visitor Log</h1>
+
+                        <p>
+                            View recorded visitor entry and exit details.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Entry & Exit Log
+                            </h2>
+
+                            <p>
+                                Visitor check-in and check-out records
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>VISITOR</th>
+                                    <th>DATE</th>
+                                    <th>CHECK-IN</th>
+                                    <th>CHECK-OUT</th>
+                                    <th>STATUS</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="logTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= SEARCH ================= -->
+
+            <section class="page-section" id="search">
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="page-label">
+                            VISITOR MANAGEMENT
+                        </span>
+
+                        <h1>Search Visitors</h1>
+
+                        <p>
+                            Search stored visitor records.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="search-panel">
+
+                    <div class="large-search">
+
+                        <span>⌕</span>
+
+                        <input
+                            type="text"
+                            id="mainSearch"
+                            placeholder="Search visitor name, contact or purpose..."
+                        >
+
+                    </div>
+
+
+                    <button
+                        class="primary-button"
+                        id="searchButton">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Search Results
+                            </h2>
+
+                            <p id="searchResultText">
+                                Enter a search term to find visitor records.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>VISITOR</th>
+                                    <th>CONTACT</th>
+                                    <th>PURPOSE</th>
+                                    <th>DATE</th>
+                                    <th>CHECK-IN</th>
+                                    <th>CHECK-OUT</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="searchTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- Mobile overlay -->
+
+    <div
+        class="overlay"
+        id="overlay">
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
