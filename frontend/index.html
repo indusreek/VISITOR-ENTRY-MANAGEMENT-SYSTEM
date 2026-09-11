@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visitor Entry Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ================= 1. LOGIN VIEW ================= -->
+    <section id="login-view" class="login-view">
+      <div class="login-card-wrapper">
+        <div class="login-hero">
+          <div class="brand-badge">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span class="badge-text">VEMS Front Desk</span>
+          </div>
+          <h1>Visitor Entry<br /><span>Management System</span></h1>
+          <p class="hero-desc">
+            Secure, rapid front-desk reception portal. Manage guest check-ins, verify ID details, track on-premises visitors, and export audit reports.
+          </p>
+          <div class="default-creds-hint">
+            <span class="hint-title">First Run Credentials</span>
+            <div class="hint-row">
+              <span>Username: <code>admin</code></span>
+              <span>Password: <code>Admin@123</code></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="login-form-card">
+          <div class="form-header">
+            <h2>Staff Sign In</h2>
+            <p>Enter your authorized staff credentials to continue.</p>
+          </div>
+
+          <form id="login-form" autocomplete="on" novalidate>
+            <div class="form-group">
+              <label for="login-username">Username</label>
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <input
+                  id="login-username"
+                  name="username"
+                  type="text"
+                  required
+                  maxlength="50"
+                  placeholder="e.g. admin"
+                  autocomplete="username"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <div class="input-with-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  required
+                  maxlength="128"
+                  placeholder="••••••••"
+                  autocomplete="current-password"
+                />
+              </div>
+            </div>
+
+            <div id="login-error" class="alert-banner alert-danger" hidden></div>
+
+            <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">
+              <span>Sign In to Reception</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 2. AUTHENTICATED APPLICATION ================= -->
+    <div id="app-view" class="app-layout" hidden>
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="app-logo">
+            <div class="logo-mark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <div class="logo-info">
+              <span class="logo-title">VisitorMS</span>
+              <span class="logo-sub">Reception Desk</span>
+            </div>
+          </div>
+          <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">✕</button>
+        </div>
+
+        <div class="nav-section">
+          <span class="nav-heading">NAVIGATION</span>
+          <nav class="nav-menu">
+            <button class="nav-link active" data-page="dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+              </svg>
+              <span>Dashboard</span>
+            </button>
+
+            <button class="nav-link" data-page="visitors">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span>Visitors Directory</span>
+            </button>
+
+            <button class="nav-link" data-page="reports">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+              <span>Date Reports</span>
+            </button>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="user-profile-card">
+            <div class="user-avatar" id="user-avatar">AD</div>
+            <div class="user-details">
+              <span class="user-display-name" id="user-display-name">Admin</span>
+              <span class="user-role-badge">
+                <span class="online-indicator"></span>
+                Authorized Staff
+              </span>
+            </div>
+          </div>
+          <button id="logout-btn" class="btn btn-outline-danger btn-block btn-logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>Log Out</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Sidebar Backdrop on Mobile -->
+      <div id="drawer-backdrop" class="drawer-backdrop" hidden></div>
+
+      <!-- Main Application Container -->
+      <div class="main-wrapper">
+        <!-- Top App Header -->
+        <header class="topbar">
+          <div class="topbar-left">
+            <button id="menu-btn" class="menu-toggle-btn" aria-label="Toggle navigation menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+            <div class="page-context">
+              <span class="page-kicker" id="page-kicker">OVERVIEW</span>
+              <h1 class="page-title" id="page-title">Dashboard</h1>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <div class="live-clock-badge" id="live-clock-badge" title="Current Local Time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span id="live-time-text">--:--:--</span>
+            </div>
+
+            <button id="quick-checkin-btn" class="btn btn-primary topbar-action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span>New Visitor</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Page View Area -->
+        <main class="page-container">
+          <!-- ================= 2.1 DASHBOARD PAGE ================= -->
+          <section id="page-dashboard" class="page-view active">
+            <!-- Welcome Header -->
+            <div class="dashboard-banner">
+              <div class="banner-text">
+                <h2>Welcome back, <span id="banner-user-name">Staff</span>!</h2>
+                <p>Here is an instant overview of today’s reception activity and premises status.</p>
+              </div>
+              <div class="banner-actions">
+                <button class="btn btn-white" data-page="visitors">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <span>Search Directory</span>
+                </button>
+                <button class="btn btn-primary" id="dash-new-visitor-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  <span>Register Visitor</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- KPI Metric Cards Grid -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon-wrapper icon-primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Total Records</span>
+                  <strong class="stat-value" id="stat-total">0</strong>
+                  <span class="stat-sub">All-time visitor visits</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-wrapper icon-info">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 14 14" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Checked In Today</span>
+                  <strong class="stat-value" id="stat-today">0</strong>
+                  <span class="stat-sub">Arrivals today</span>
+                </div>
+              </div>
+
+              <div class="stat-card stat-card-highlight">
+                <div class="stat-icon-wrapper icon-success">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Currently Inside</span>
+                  <strong class="stat-value" id="stat-inside">0</strong>
+                  <span class="stat-sub">
+                    <span class="live-dot pulse"></span>
+                    Guests on premises now
+                  </span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-wrapper icon-neutral">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Checked Out Today</span>
+                  <strong class="stat-value" id="stat-out">0</strong>
+                  <span class="stat-sub">Completed visits today</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Visits Section -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div class="panel-header-title">
+                  <h3>Recent Visitor Visits</h3>
+                  <p>Up to 10 latest entries recorded by reception.</p>
+                </div>
+                <button class="btn btn-outline" data-page="visitors">
+                  <span>View All Visitors</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table" id="recent-table">
+                  <thead>
+                    <tr>
+                      <th>Visitor</th>
+                      <th>Phone</th>
+                      <th>Host to Meet</th>
+                      <th>Check-In Time</th>
+                      <th>Status</th>
+                      <th class="text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ================= 2.2 VISITORS DIRECTORY PAGE ================= -->
+          <section id="page-visitors" class="page-view" hidden>
+            <div class="panel-card">
+              <!-- Search & Filter Controls -->
+              <div class="directory-toolbar">
+                <div class="search-box">
+                  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input
+                    id="search-input"
+                    type="search"
+                    placeholder="Search by name, phone, host, purpose, organization…"
+                    autocomplete="off"
+                  />
+                  <button id="search-clear-btn" class="search-clear-btn" aria-label="Clear search" hidden>✕</button>
+                </div>
+
+                <div class="filter-group">
+                  <label for="status-filter" class="filter-label">Status:</label>
+                  <select id="status-filter" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="checked_in">Checked In (Inside)</option>
+                    <option value="checked_out">Checked Out</option>
+                  </select>
+                </div>
+
+                <button id="add-visitor-btn" class="btn btn-primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                  <span>New Visitor</span>
+                </button>
+              </div>
+
+              <!-- Visitor Directory Summary Count -->
+              <div class="directory-meta">
+                <span id="visitors-count-text">Loading records…</span>
+              </div>
+
+              <!-- Visitors Table -->
+              <div class="table-responsive">
+                <table class="data-table" id="visitors-table">
+                  <thead>
+                    <tr>
+                      <th>Visitor Name</th>
+                      <th>Phone</th>
+                      <th>Host / Person</th>
+                      <th>Purpose of Visit</th>
+                      <th>Check-In</th>
+                      <th>Check-Out</th>
+                      <th>Status</th>
+                      <th class="text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="visitors-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ================= 2.3 DATE REPORTS PAGE ================= -->
+          <section id="page-reports" class="page-view" hidden>
+            <div class="panel-card report-filter-card">
+              <div class="panel-header">
+                <div class="panel-header-title">
+                  <h3>Date-Range Visit Reports</h3>
+                  <p>Generate summary statistics and visit records filtered by check-in date.</p>
+                </div>
+              </div>
+
+              <form id="report-form" class="report-controls-form">
+                <div class="date-inputs-row">
+                  <div class="form-group date-group">
+                    <label for="report-from">From Date *</label>
+                    <input id="report-from" type="date" required />
+                  </div>
+
+                  <div class="form-group date-group">
+                    <label for="report-to">To Date *</label>
+                    <input id="report-to" type="date" required />
+                  </div>
+
+                  <div class="form-group preset-group">
+                    <label>Quick Presets</label>
+                    <div class="preset-buttons">
+                      <button type="button" class="btn btn-sm btn-outline preset-btn" data-preset="today">Today</button>
+                      <button type="button" class="btn btn-sm btn-outline preset-btn" data-preset="yesterday">Yesterday</button>
+                      <button type="button" class="btn btn-sm btn-outline preset-btn" data-preset="week">Last 7 Days</button>
+                      <button type="button" class="btn btn-sm btn-outline preset-btn" data-preset="month">This Month</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="report-action-buttons">
+                  <button type="submit" class="btn btn-primary" id="generate-report-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    <span>Generate Report</span>
+                  </button>
+
+                  <button type="button" id="print-report-btn" class="btn btn-outline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 6 2 18 2 18 9" />
+                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                      <rect x="6" y="14" width="12" height="8" />
+                    </svg>
+                    <span>Print Report</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Report Summary Cards -->
+            <div class="stats-grid report-summary-grid">
+              <div class="stat-card">
+                <div class="stat-icon-wrapper icon-primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Visits in Range</span>
+                  <strong class="stat-value" id="report-total">0</strong>
+                  <span class="stat-sub">Total visits recorded</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-wrapper icon-success">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Still Inside</span>
+                  <strong class="stat-value" id="report-inside">0</strong>
+                  <span class="stat-sub">Currently on site</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-wrapper icon-neutral">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-label">Checked Out</span>
+                  <strong class="stat-value" id="report-out">0</strong>
+                  <span class="stat-sub">Departures recorded</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Printable Report Area -->
+            <div class="panel-card print-target-area">
+              <div class="report-print-header">
+                <div class="print-brand">
+                  <h2>VISITOR ENTRY MANAGEMENT SYSTEM</h2>
+                  <p class="print-sub">Official Reception Visit Log Report</p>
+                </div>
+                <div class="print-meta">
+                  <p><strong id="report-heading">Visit Report</strong></p>
+                  <p>Generated by: <span id="report-generated-by">Staff</span></p>
+                  <p>Generated at: <span id="report-generated-at">—</span></p>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table" id="report-table">
+                  <thead>
+                    <tr>
+                      <th>Visitor Name</th>
+                      <th>Phone</th>
+                      <th>Organization</th>
+                      <th>Host / Person</th>
+                      <th>Purpose of Visit</th>
+                      <th>Check-In</th>
+                      <th>Check-Out</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="report-body">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ================= 3. MODALS & DIALOGS ================= -->
+
+    <!-- Modal 1: Check-in / Edit Visitor Modal -->
+    <dialog id="visitor-dialog" class="app-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <h3 id="dialog-title">Register New Visitor</h3>
+            <p id="dialog-subtitle">Fill in the required guest and visit details for check-in.</p>
+          </div>
+          <button type="button" class="modal-close-btn" id="cancel-dialog" aria-label="Close dialog">✕</button>
+        </div>
+
+        <form id="visitor-form" novalidate>
+          <input type="hidden" id="visitor-id" />
+
+          <div id="visitor-form-error" class="alert-banner alert-danger" hidden></div>
+
+          <div class="modal-body-grid">
+            <div class="form-group">
+              <label for="full_name">Full Name <span class="required-star">*</span></label>
+              <input
+                id="full_name"
+                type="text"
+                required
+                minlength="2"
+                maxlength="100"
+                placeholder="e.g. Priya Sharma"
+              />
+              <span class="field-hint">2 to 100 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number <span class="required-star">*</span></label>
+              <input
+                id="phone"
+                type="tel"
+                required
+                inputmode="numeric"
+                maxlength="10"
+                pattern="\d{10}"
+                placeholder="10-digit mobile number"
+              />
+              <span class="field-hint">Exactly 10 digits (digits only)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address <span class="optional-label">(Optional)</span></label>
+              <input
+                id="email"
+                type="email"
+                maxlength="120"
+                placeholder="name@example.com"
+              />
+              <span class="field-hint">Valid email format if provided</span>
+            </div>
+
+            <div class="form-group">
+              <label for="organization">Organization / Company <span class="optional-label">(Optional)</span></label>
+              <input
+                id="organization"
+                type="text"
+                maxlength="100"
+                placeholder="e.g. Apex Solutions"
+              />
+              <span class="field-hint">Max 100 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label for="purpose">Purpose of Visit <span class="required-star">*</span></label>
+              <input
+                id="purpose"
+                type="text"
+                required
+                minlength="2"
+                maxlength="200"
+                placeholder="e.g. Project consultation / Interview"
+              />
+              <span class="field-hint">2 to 200 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label for="host_name">Person to Meet (Host) <span class="required-star">*</span></label>
+              <input
+                id="host_name"
+                type="text"
+                required
+                minlength="2"
+                maxlength="100"
+                placeholder="e.g. Dr. Rajesh Verma"
+              />
+              <span class="field-hint">2 to 100 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label for="id_proof_type">ID Proof Type <span class="required-star">*</span></label>
+              <select id="id_proof_type" required>
+                <option value="Aadhaar">Aadhaar</option>
+                <option value="Driving License">Driving License</option>
+                <option value="PAN">PAN</option>
+                <option value="Passport">Passport</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="field-hint">Select government / official ID</span>
+            </div>
+
+            <div class="form-group">
+              <label for="id_proof_number">ID Proof Number <span class="required-star">*</span></label>
+              <input
+                id="id_proof_number"
+                type="text"
+                required
+                minlength="3"
+                maxlength="50"
+                placeholder="e.g. 1234 5678 9012"
+              />
+              <span class="field-hint">3 to 50 characters</span>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="notes">Notes <span class="optional-label">(Optional)</span></label>
+              <textarea
+                id="notes"
+                rows="3"
+                maxlength="500"
+                placeholder="Additional notes, gate pass observations, or luggage details…"
+              ></textarea>
+              <div class="textarea-footer">
+                <span class="field-hint">Max 500 characters</span>
+                <span id="notes-char-count" class="char-count">0 / 500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="cancel-dialog-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="save-visitor-btn">
+              <span>Save & Check In</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Modal 2: View Single Visitor Details (FR-3) -->
+    <dialog id="view-dialog" class="app-modal view-detail-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <h3 id="view-visitor-name">Visitor Details</h3>
+            <p>Complete record information for this visitor.</p>
+          </div>
+          <button type="button" class="modal-close-btn" id="close-view-dialog" aria-label="Close dialog">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="detail-status-banner">
+            <div class="detail-main-info">
+              <h4 id="view-full-name">—</h4>
+              <p id="view-org">—</p>
+            </div>
+            <div id="view-status-pill">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Phone Number</span>
+              <strong class="detail-val" id="view-phone">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Email Address</span>
+              <strong class="detail-val" id="view-email">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Host to Meet</span>
+              <strong class="detail-val" id="view-host">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Purpose of Visit</span>
+              <strong class="detail-val" id="view-purpose">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">ID Proof Type</span>
+              <strong class="detail-val" id="view-id-type">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">ID Proof Number</span>
+              <strong class="detail-val" id="view-id-num">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Check-In Time</span>
+              <strong class="detail-val" id="view-checkin">—</strong>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Check-Out Time</span>
+              <strong class="detail-val" id="view-checkout">—</strong>
+            </div>
+
+            <div class="detail-item full-width">
+              <span class="detail-label">Notes</span>
+              <p class="detail-val-notes" id="view-notes">—</p>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Record Created</span>
+              <span class="detail-timestamp" id="view-created">—</span>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Last Updated</span>
+              <span class="detail-timestamp" id="view-updated">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="close-view-btn">Close</button>
+          <button type="button" class="btn btn-success" id="view-checkout-btn" hidden>Check Out Now</button>
+          <button type="button" class="btn btn-primary" id="view-edit-btn">Edit Record</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Modal 3: Confirm Delete Dialog (FR-5) -->
+    <dialog id="delete-dialog" class="app-modal confirm-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-danger-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </div>
+          <div class="modal-title-wrap">
+            <h3>Delete Visitor Record</h3>
+            <p>This action cannot be undone.</p>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <p class="confirm-text">
+            Are you sure you want to permanently delete the visitor record for
+            <strong id="delete-visitor-name">—</strong>?
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancel-delete-btn">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete Permanently</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Main Frontend Script -->
+    <script src="/app.js"></script>
+  </body>
+</html>
