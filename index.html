@@ -64,6 +64,11 @@
                 <span>Search Visitors</span>
             </button>
 
+            <button class="nav-item" data-section="reports">
+                <span class="nav-icon">📊</span>
+                <span>Visit Reports</span>
+            </button>
+
         </div>
 
 
@@ -556,13 +561,13 @@
                             <div class="form-group">
 
                                 <label for="visitorName">
-                                    Visitor Name
+                                    Visitor Name *
                                 </label>
 
                                 <input
                                     type="text"
                                     id="visitorName"
-                                    placeholder="Enter visitor name"
+                                    placeholder="Enter visitor name (2-100 characters)"
                                     required
                                 >
 
@@ -572,13 +577,31 @@
                             <div class="form-group">
 
                                 <label for="phone">
-                                    Contact Number
+                                    Contact Number (10 digits) *
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    placeholder="e.g. 9876543210"
+                                    pattern="[0-9]{10}"
+                                    maxlength="10"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="hostName">
+                                    Person to Meet (Host) *
                                 </label>
 
                                 <input
                                     type="text"
-                                    id="phone"
-                                    placeholder="Enter contact number"
+                                    id="hostName"
+                                    placeholder="e.g. Principal / Department Head"
                                     required
                                 >
 
@@ -588,14 +611,77 @@
                             <div class="form-group">
 
                                 <label for="purpose">
-                                    Purpose of Visit
+                                    Purpose of Visit *
                                 </label>
 
                                 <input
                                     type="text"
                                     id="purpose"
-                                    placeholder="Enter purpose"
+                                    placeholder="e.g. Admission Enquiry / Meeting"
                                     required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="idProofType">
+                                    ID Proof Type *
+                                </label>
+
+                                <select id="idProofType" required>
+                                    <option value="Aadhaar">Aadhaar</option>
+                                    <option value="Driving License">Driving License</option>
+                                    <option value="PAN">PAN</option>
+                                    <option value="Passport">Passport</option>
+                                    <option value="Other">Other</option>
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="idProofNumber">
+                                    ID Proof Number *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="idProofNumber"
+                                    placeholder="e.g. ID card number"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="organization">
+                                    Organization / Company
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="organization"
+                                    placeholder="e.g. Self / Company name"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="email">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    placeholder="e.g. visitor@example.com"
                                 >
 
                             </div>
@@ -610,7 +696,21 @@
                                 <input
                                     type="date"
                                     id="date"
-                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="notes">
+                                    Notes / Remarks
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="notes"
+                                    placeholder="Additional remarks or pass details"
                                 >
 
                             </div>
@@ -896,6 +996,194 @@
                             </thead>
 
                             <tbody id="searchTable"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= REPORTS ================= -->
+
+            <section class="page-section" id="reports">
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="page-label">
+                            VISITOR MANAGEMENT
+                        </span>
+
+                        <h1>Visit Reports</h1>
+
+                        <p>
+                            Generate visitor summary and detailed logs for any date range.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Filter by Date Range
+                            </h2>
+
+                            <p>
+                                Select start date and end date to generate visit report
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form id="reportsFilterForm" class="report-filter-bar" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;padding:20px 24px;background:#fafafa;border-bottom:1px solid #f0f1f4;">
+
+                        <div class="form-group" style="margin:0;min-width:180px;">
+
+                            <label for="reportDateFrom">
+                                Date From
+                            </label>
+
+                            <input
+                                type="date"
+                                id="reportDateFrom"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group" style="margin:0;min-width:180px;">
+
+                            <label for="reportDateTo">
+                                Date To
+                            </label>
+
+                            <input
+                                type="date"
+                                id="reportDateTo"
+                                required
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                            id="generateReportBtn">
+
+                            Generate Report
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="action-button edit-button"
+                            id="printReportBtn"
+                            style="padding:10px 18px;font-weight:600;"
+                            onclick="window.print()">
+
+                            Print Report
+
+                        </button>
+
+                    </form>
+
+
+                    <div class="summary-grid" style="padding:20px 24px;margin:0;border-bottom:1px solid #f0f1f4;">
+
+                        <div class="summary-card">
+
+                            <span class="summary-title">
+                                TOTAL VISITS
+                            </span>
+
+                            <div class="summary-value" id="reportTotalVisits">
+                                0
+                            </div>
+
+                            <span class="summary-subtext">
+                                in selected range
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <span class="summary-title">
+                                CURRENTLY INSIDE
+                            </span>
+
+                            <div class="summary-value" id="reportCurrentlyInside">
+                                0
+                            </div>
+
+                            <span class="summary-subtext">
+                                still on campus
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-card">
+
+                            <span class="summary-title">
+                                CHECKED OUT
+                            </span>
+
+                            <div class="summary-value" id="reportCheckedOut">
+                                0
+                            </div>
+
+                            <span class="summary-subtext">
+                                completed visits
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>VISITOR</th>
+                                    <th>CONTACT</th>
+                                    <th>PURPOSE</th>
+                                    <th>HOST</th>
+                                    <th>CHECK-IN</th>
+                                    <th>CHECK-OUT</th>
+                                    <th>STATUS</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="reportTable">
+                                <tr>
+                                    <td colspan="7" class="empty-state">
+                                        Select dates and click Generate Report.
+                                    </td>
+                                </tr>
+                            </tbody>
 
                         </table>
 

@@ -1,0 +1,8 @@
+{
+  "name": "Visitor Management System",
+  "description": "College visitor entry management system to record, search, update, check out, and report visitor records.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

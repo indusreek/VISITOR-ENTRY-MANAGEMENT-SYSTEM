@@ -1802,6 +1802,20 @@ td:first-child {
 }
 
 
+.checkout-button {
+
+    color: #15803d;
+
+    background: #eaf8ef;
+}
+
+
+.checkout-button:hover {
+
+    background: #dcfce7;
+}
+
+
 .edit-button {
 
     color: var(--primary);
@@ -1867,7 +1881,9 @@ td:first-child {
 }
 
 
-.form-group input {
+.form-group input,
+.form-group select,
+.form-group textarea {
 
     width: 100%;
 
@@ -1892,7 +1908,9 @@ td:first-child {
 }
 
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
 
     background: white;
 
