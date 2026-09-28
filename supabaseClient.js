@@ -1,34 +1,171 @@
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
+// Load environment variables from .env if available
+try {
+  process.loadEnvFile();
+} catch (e) {
+  // .env not present or running in container
+}
+
 // Lazy-loaded Supabase client singleton
 let supabaseClient = null;
+let migrationTriggered = false;
 
 export function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
+export function getResolvedSupabaseCredentials() {
+  const envUrl = (process.env.SUPABASE_URL || '').trim();
+  const envServiceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+  const envAnonKey = (process.env.SUPABASE_ANON_KEY || '').trim();
+
+  const candidates = [envUrl, envAnonKey, envServiceKey].filter(Boolean);
+  let url = candidates.find(s => s.startsWith('http://') || s.startsWith('https://'));
+  if (url) {
+    url = url.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+  }
+
+  // Find valid JWT keys (not starting with http)
+  const keys = candidates.filter(s => !s.startsWith('http://') && !s.startsWith('https://'));
+  // Prefer service role key if available, else anon key
+  let key = keys.find(k => {
+    try {
+      const parts = k.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+        return payload.role === 'service_role';
+      }
+    } catch (e) {}
+    return false;
+  }) || keys[0];
+
+  if (url && key) {
+    return { url, key };
+  }
+  return null;
+}
+
 export function isSupabaseConfigured() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-  return Boolean(url && url.trim() && key && key.trim());
+  return Boolean(getResolvedSupabaseCredentials());
 }
 
 export function getSupabase() {
   if (!supabaseClient) {
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-    if (!url || !key) {
+    const creds = getResolvedSupabaseCredentials();
+    if (!creds) {
       return null;
     }
-    supabaseClient = createClient(url.trim(), key.trim(), {
+    supabaseClient = createClient(creds.url, creds.key, {
       auth: {
         persistSession: false,
         autoRefreshToken: false
       }
     });
+
+    if (!migrationTriggered) {
+      migrationTriggered = true;
+      autoMigrateIfEmpty().catch(err => {
+        console.warn('Supabase auto-migration background error:', err.message);
+      });
+    }
   }
   return supabaseClient;
+}
+
+export async function autoMigrateIfEmpty() {
+  const supabase = getSupabase();
+  if (!supabase) return { configured: false };
+
+  try {
+    // 1. Check & ensure default admin staff exists
+    const { data: users, error: userErr } = await supabase
+      .from('users')
+      .select('id')
+      .limit(1);
+
+    if (!userErr && (!users || users.length === 0)) {
+      await supabase.from('users').insert([{
+        username: 'admin',
+        password_hash: hashPassword('Admin@123'),
+        full_name: 'College Staff'
+      }]);
+      console.log('⚡ [Supabase Migration] Seeded default staff account: admin');
+    }
+
+    // 2. Check & ensure initial visitor records exist without losing data
+    const { data: visitors, error: vErr } = await supabase
+      .from('visitors')
+      .select('id')
+      .limit(1);
+
+    if (!vErr && (!visitors || visitors.length === 0)) {
+      const recordsToSeed = localVisitors.map(v => ({
+        full_name: v.full_name,
+        phone: v.phone,
+        email: v.email,
+        organization: v.organization,
+        purpose: v.purpose,
+        host_name: v.host_name,
+        id_proof_type: v.id_proof_type,
+        id_proof_number: v.id_proof_number,
+        notes: v.notes,
+        status: v.status,
+        check_in_time: v.check_in_time,
+        check_out_time: v.check_out_time,
+        created_at: v.created_at,
+        updated_at: v.updated_at
+      }));
+
+      const { data: inserted, error: insertErr } = await supabase
+        .from('visitors')
+        .insert(recordsToSeed)
+        .select();
+
+      if (!insertErr && inserted) {
+        console.log(`⚡ [Supabase Migration] Migrated ${inserted.length} existing visitor records to Supabase PostgreSQL.`);
+        return { configured: true, migrated: true, count: inserted.length };
+      }
+    }
+
+    return { configured: true, migrated: false };
+  } catch (err) {
+    console.warn('⚡ [Supabase Migration] Exception during sync:', err.message);
+    return { configured: true, error: err.message };
+  }
+}
+
+export async function getDatabaseStatus() {
+  const creds = getResolvedSupabaseCredentials();
+  if (creds) {
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { count, error } = await supabase
+          .from('visitors')
+          .select('*', { count: 'exact', head: true });
+
+        if (!error) {
+          return {
+            engine: 'Supabase PostgreSQL',
+            connected: true,
+            configured: true,
+            url: creds.url,
+            total_records: count ?? 0
+          };
+        }
+      } catch (e) {}
+    }
+  }
+
+  return {
+    engine: 'In-Memory / SQLite Fallback',
+    connected: true,
+    configured: false,
+    url: null,
+    total_records: localVisitors.length
+  };
 }
 
 // ----------------------------------------------------

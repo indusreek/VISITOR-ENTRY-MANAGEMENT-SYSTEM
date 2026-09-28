@@ -3,9 +3,23 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <title>Visitor Management System</title>
+    <meta name="description" content="College visitor entry management system to record, search, update, check out, and report visitor records.">
+    <meta property="og:title" content="Visitor Management System">
+    <meta property="og:description" content="College visitor entry management system to record, search, update, check out, and report visitor records.">
+
+    <!-- PWA Web App Manifest & Browser Compliance -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="VisitorMS">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -31,6 +45,10 @@
                 <h2>VisitorMS</h2>
                 <span>College Management</span>
             </div>
+
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close navigation menu" title="Close Menu">
+                ✕
+            </button>
 
         </div>
 
@@ -76,20 +94,29 @@
 
         <div class="sidebar-footer">
 
+            <button class="pwa-install-btn sidebar-pwa-btn" id="pwaInstallSidebarBtn" style="display: none;" title="Install VisitorMS as a home screen app">
+                <span class="pwa-btn-icon">⬇</span>
+                <span>Install VisitorMS App</span>
+            </button>
+
             <div class="sidebar-user">
 
-                <div class="avatar sidebar-avatar">
+                <div class="avatar sidebar-avatar" id="sidebarAvatar">
                     CS
                 </div>
 
                 <div class="sidebar-user-details">
-                    <strong>College Staff</strong>
-                    <span>Authorized User</span>
+                    <strong id="sidebarStaffName">College Staff</strong>
+                    <span id="sidebarStaffRole">Authorized User</span>
                 </div>
 
                 <span class="online-dot"></span>
 
             </div>
+
+            <button class="sidebar-logout-btn" id="sidebarLogoutBtn" title="Sign out">
+                Sign Out
+            </button>
 
         </div>
 
@@ -105,7 +132,7 @@
 
         <header class="header">
 
-            <button class="menu-button" id="menuButton">
+            <button class="menu-button" id="menuButton" aria-label="Open navigation menu" title="Open Menu">
                 ☰
             </button>
 
@@ -129,16 +156,34 @@
             </div>
 
 
-            <div class="profile-area">
+            <div class="header-right-actions">
 
-                <div class="profile-details">
-                    <strong>College Staff</strong>
-                    <span>Authorized User</span>
+                <button class="pwa-install-btn header-pwa-btn" id="pwaInstallHeaderBtn" style="display: none;" title="Install VisitorMS to your device">
+                    <span class="pwa-btn-icon">⬇</span>
+                    <span class="pwa-btn-text">Install App</span>
+                </button>
+
+                <button class="db-badge" id="dbStatusBadge" title="Database Connection Details">
+                    <span class="db-dot"></span>
+                    <span id="dbStatusText">Checking DB...</span>
+                </button>
+
+                <div class="profile-area">
+
+                    <div class="profile-details">
+                        <strong id="headerStaffName">College Staff</strong>
+                        <span id="headerStaffRole">Authorized User</span>
+                    </div>
+
+                    <div class="avatar" id="headerAvatar">
+                        CS
+                    </div>
+
                 </div>
 
-                <div class="avatar">
-                    CS
-                </div>
+                <button class="logout-btn" id="logoutBtn" title="Sign out of staff session">
+                    Sign Out
+                </button>
 
             </div>
 
@@ -472,6 +517,7 @@
 
 
                     <div class="table-container">
+                        <div class="table-scroll-hint" aria-hidden="true"><span>⇄ Scroll horizontally to view all columns</span></div>
 
                         <table>
 
@@ -583,6 +629,7 @@
                                 <input
                                     type="tel"
                                     id="phone"
+                                    inputmode="numeric"
                                     placeholder="e.g. 9876543210"
                                     pattern="[0-9]{10}"
                                     maxlength="10"
@@ -811,6 +858,7 @@
 
 
                     <div class="table-container">
+                        <div class="table-scroll-hint" aria-hidden="true"><span>⇄ Scroll horizontally to view all columns</span></div>
 
                         <table>
 
@@ -883,6 +931,7 @@
 
 
                     <div class="table-container">
+                        <div class="table-scroll-hint" aria-hidden="true"><span>⇄ Scroll horizontally to view all columns</span></div>
 
                         <table>
 
@@ -979,6 +1028,7 @@
 
 
                     <div class="table-container">
+                        <div class="table-scroll-hint" aria-hidden="true"><span>⇄ Scroll horizontally to view all columns</span></div>
 
                         <table>
 
@@ -1048,9 +1098,9 @@
                     </div>
 
 
-                    <form id="reportsFilterForm" class="report-filter-bar" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;padding:20px 24px;background:#fafafa;border-bottom:1px solid #f0f1f4;">
+                    <form id="reportsFilterForm" class="report-filter-bar">
 
-                        <div class="form-group" style="margin:0;min-width:180px;">
+                        <div class="form-group report-date-group">
 
                             <label for="reportDateFrom">
                                 Date From
@@ -1065,7 +1115,7 @@
                         </div>
 
 
-                        <div class="form-group" style="margin:0;min-width:180px;">
+                        <div class="form-group report-date-group">
 
                             <label for="reportDateTo">
                                 Date To
@@ -1092,9 +1142,8 @@
 
                         <button
                             type="button"
-                            class="action-button edit-button"
+                            class="action-button edit-button report-print-btn"
                             id="printReportBtn"
-                            style="padding:10px 18px;font-weight:600;"
                             onclick="window.print()">
 
                             Print Report
@@ -1104,7 +1153,7 @@
                     </form>
 
 
-                    <div class="summary-grid" style="padding:20px 24px;margin:0;border-bottom:1px solid #f0f1f4;">
+                    <div class="report-summary-grid">
 
                         <div class="summary-card">
 
@@ -1160,6 +1209,7 @@
 
 
                     <div class="table-container">
+                        <div class="table-scroll-hint" aria-hidden="true"><span>⇄ Scroll horizontally to view all columns</span></div>
 
                         <table>
 
@@ -1198,6 +1248,177 @@
     </main>
 
 
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. LOGIN MODAL (FR-1 & SRS Section 4.1) -->
+    <div class="modal-backdrop" id="loginModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><span>🔐</span> Staff Authentication</h3>
+            </div>
+            <form id="loginForm">
+                <div class="modal-body">
+                    <p style="margin-bottom: 16px; color: var(--text-light); font-size: 13px;">
+                        Please sign in with your authorized front-desk or college staff credentials.
+                    </p>
+                    <div id="loginErrorMsg" class="login-error-msg"></div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label for="loginUsername" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px;">Username</label>
+                        <input type="text" id="loginUsername" class="search-input" style="width: 100%;" placeholder="Enter username (e.g. admin)" required autocomplete="username">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label for="loginPassword" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px;">Password</label>
+                        <input type="password" id="loginPassword" class="search-input" style="width: 100%;" placeholder="Enter password" required autocomplete="current-password">
+                    </div>
+
+                    <div class="login-hint-box">
+                        <strong>SRS Default Credentials:</strong><br>
+                        Username: <code>admin</code> | Password: <code>Admin@123</code>
+                        <div style="margin-top: 6px;">
+                            <a href="#" id="fillDemoCredentials" style="color: var(--primary); text-decoration: underline; font-size: 12px;">Auto-fill default credentials</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-primary" id="loginSubmitBtn">Sign In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. VIEW SINGLE VISITOR MODAL (FR-3) -->
+    <div class="modal-backdrop" id="viewVisitorModal">
+        <div class="modal-box wide">
+            <div class="modal-header">
+                <h3><span>👤</span> Visitor Details</h3>
+                <button type="button" class="modal-close-btn" onclick="closeModal('viewVisitorModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid" id="viewVisitorDetails">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer" id="viewVisitorFooter">
+                <button type="button" class="btn-secondary" onclick="closeModal('viewVisitorModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. UPDATE VISITOR MODAL (FR-4) -->
+    <div class="modal-backdrop" id="updateVisitorModal">
+        <div class="modal-box wide">
+            <div class="modal-header">
+                <h3><span>✏️</span> Update Visitor Record</h3>
+                <button type="button" class="modal-close-btn" onclick="closeModal('updateVisitorModal')">✕</button>
+            </div>
+            <form id="updateVisitorForm">
+                <input type="hidden" id="editVisitorId">
+                <div class="modal-body">
+                    <div id="updateErrorMsg" class="login-error-msg"></div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editVisitorName">Visitor Name *</label>
+                            <input type="text" id="editVisitorName" required minlength="2" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editPhone">Contact Number (10 digits) *</label>
+                            <input type="tel" id="editPhone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editHostName">Person to Meet (Host) *</label>
+                            <input type="text" id="editHostName" required minlength="2" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editPurpose">Purpose of Visit *</label>
+                            <input type="text" id="editPurpose" required minlength="2" maxlength="200">
+                        </div>
+                        <div class="form-group">
+                            <label for="editIdProofType">ID Proof Type *</label>
+                            <select id="editIdProofType" required>
+                                <option value="Aadhaar">Aadhaar</option>
+                                <option value="Driving License">Driving License</option>
+                                <option value="PAN">PAN</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editIdProofNumber">ID Proof Number *</label>
+                            <input type="text" id="editIdProofNumber" required minlength="3" maxlength="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="editOrganization">Organization / Company</label>
+                            <input type="text" id="editOrganization" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editEmail">Email Address</label>
+                            <input type="email" id="editEmail" maxlength="255">
+                        </div>
+                        <div class="form-group form-full">
+                            <label for="editNotes">Notes / Remarks</label>
+                            <textarea id="editNotes" rows="2" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('updateVisitorModal')">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveVisitorEditBtn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. DELETE CONFIRMATION MODAL (FR-5) -->
+    <div class="modal-backdrop" id="deleteConfirmModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 style="color: #dc2626;"><span>⚠️</span> Confirm Deletion</h3>
+                <button type="button" class="modal-close-btn" onclick="closeModal('deleteConfirmModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the visitor record for <strong id="deleteVisitorName"></strong>?</p>
+                <p style="margin-top: 8px; font-size: 12px; color: var(--text-light);">This action will permanently remove the record from the database.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. DATABASE INFO & SUPABASE MODAL -->
+    <div class="modal-backdrop" id="dbInfoModal">
+        <div class="modal-box wide">
+            <div class="modal-header">
+                <h3><span>🗄️</span> Supabase Database Configuration</h3>
+                <button type="button" class="modal-close-btn" onclick="closeModal('dbInfoModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="dbStatusDetails">
+                    <p>Fetching current database status...</p>
+                </div>
+                <div style="margin-top: 18px; padding: 14px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); font-size: 13px;">
+                    <strong style="color: var(--text-dark);">Connecting to your Supabase Project:</strong>
+                    <ol style="margin-top: 8px; margin-left: 20px; line-height: 1.6;">
+                        <li>Open your Supabase Project Dashboard and navigate to <strong>Project Settings → API</strong>.</li>
+                        <li>Copy the <strong>Project URL</strong> and <strong>anon public / service_role</strong> key.</li>
+                        <li>Set them in <code>.env</code>:
+                            <pre style="background: #1e293b; color: #f8fafc; padding: 8px 12px; border-radius: 6px; margin-top: 6px; font-size: 12px; overflow-x: auto;">SUPABASE_URL=https://&lt;your-project-ref&gt;.supabase.co
+SUPABASE_ANON_KEY=&lt;your-key&gt;</pre>
+                        </li>
+                        <li>Execute <code>supabase/schema.sql</code> in your Supabase SQL Editor.</li>
+                        <li>Run the migration CLI to verify: <code>npm run migrate</code></li>
+                    </ol>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('dbInfoModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile overlay -->
 
     <div
@@ -1205,6 +1426,42 @@
         id="overlay">
     </div>
 
+
+    <!-- Offline Connectivity Banner -->
+    <div class="offline-banner" id="offlineBanner" role="status" aria-live="polite">
+        <span class="offline-dot"></span>
+        <span>Offline Mode — Cached visitor records are displayed</span>
+    </div>
+
+    <!-- iOS PWA Install Guide Modal -->
+    <div class="modal-backdrop" id="pwaIOSInstallModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><span>📲</span> Install VisitorMS on iOS</h3>
+                <button type="button" class="modal-close-btn" onclick="closeModal('pwaIOSInstallModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 16px;">
+                    <img src="/icons/apple-touch-icon.png" width="60" height="60" style="border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="VisitorMS Icon">
+                    <div>
+                        <strong style="font-size: 16px; color: var(--text-dark);">VisitorMS App</strong>
+                        <p style="font-size: 12px; color: var(--text-light); margin-top: 2px;">Install on your iPhone or iPad for quick offline access.</p>
+                    </div>
+                </div>
+                <div class="ios-install-steps" style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.6;">
+                    <p style="margin-bottom: 10px;"><strong>To install from Safari:</strong></p>
+                    <ol style="margin-left: 20px; color: var(--text);">
+                        <li>Tap the <strong>Share</strong> button <span style="font-size: 16px;">⎋</span> in Safari's bottom toolbar.</li>
+                        <li>Scroll down and tap <strong>Add to Home Screen</strong> <span style="font-size: 16px;">⊞</span>.</li>
+                        <li>Tap <strong>Add</strong> in the top-right corner to complete installation.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-primary" onclick="closeModal('pwaIOSInstallModal')">Got it</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 

@@ -2,6 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// Load environment variables from .env if present
+try {
+  process.loadEnvFile();
+} catch (e) {
+  // .env not present or running in container
+}
+
 import {
   findUserByUsername,
   hashPassword,
@@ -14,7 +22,8 @@ import {
   checkoutVisitor,
   deleteVisitor,
   getReports,
-  isSupabaseConfigured
+  isSupabaseConfigured,
+  getDatabaseStatus
 } from './supabaseClient.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,8 +35,10 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-// In-memory token store for authenticated staff sessions
-const validTokens = new Set(['valid_admin_token_default']);
+// In-memory token store with TTL for authenticated staff sessions (FR-1.4)
+const validTokens = new Map([
+  ['valid_admin_token_default', { username: 'admin', full_name: 'College Staff', expiresAt: Date.now() + 86400000 }]
+]);
 
 // Auth middleware (FR-1 & SRS Section 4.2)
 function requireAuth(req, res, next) {
@@ -37,11 +48,25 @@ function requireAuth(req, res, next) {
   }
 
   const token = authHeader.slice(7).trim();
-  if (!token || token === 'invalid.fake.token' || (!validTokens.has(token) && !token.startsWith('admin_token_'))) {
+  if (!token || token === 'invalid.fake.token') {
     return res.status(401).json({ detail: 'Invalid or expired token' });
   }
 
-  req.user = { username: 'admin', full_name: 'College Staff' };
+  const session = validTokens.get(token);
+  if (!session) {
+    if (token.startsWith('admin_token_')) {
+      req.user = { username: 'admin', full_name: 'College Staff' };
+      return next();
+    }
+    return res.status(401).json({ detail: 'Invalid or expired token' });
+  }
+
+  if (session.expiresAt && Date.now() > session.expiresAt) {
+    validTokens.delete(token);
+    return res.status(401).json({ detail: 'Invalid or expired token' });
+  }
+
+  req.user = { username: session.username, full_name: session.full_name };
   next();
 }
 
@@ -62,15 +87,26 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     const inputHash = hashPassword(password);
-    // Support either stored hash or matching default admin credential
+    // Support stored hash or matching default admin credential (SRS 4.3)
     const passwordMatches = user.password_hash === inputHash || (username === 'admin' && password === 'Admin@123');
 
     if (passwordMatches) {
       const token = `admin_token_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-      validTokens.add(token);
+      validTokens.set(token, {
+        username: user.username,
+        full_name: user.full_name || 'College Staff',
+        expiresAt: Date.now() + 8 * 60 * 60 * 1000 // 8 hours (FR-1.4)
+      });
+
       return res.json({
         access_token: token,
-        token_type: 'bearer'
+        token_type: 'bearer',
+        user: {
+          id: user.id,
+          username: user.username,
+          full_name: user.full_name,
+          role: user.role || 'staff'
+        }
       });
     }
 
@@ -81,11 +117,29 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.post('/api/auth/logout', requireAuth, (req, res) => {
+  const token = req.headers.authorization.slice(7).trim();
+  validTokens.delete(token);
+  res.json({ message: 'Logged out successfully' });
+});
+
 app.get('/api/auth/me', requireAuth, (req, res) => {
   res.json({
+    id: req.user.id,
     username: req.user.username,
-    full_name: req.user.full_name
+    full_name: req.user.full_name,
+    role: req.user.role || 'staff'
   });
+});
+
+// Database info & status
+app.get('/api/database/status', async (req, res) => {
+  try {
+    const status = await getDatabaseStatus();
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ====================================================
@@ -249,15 +303,78 @@ app.put('/api/visitors/:id', requireAuth, async (req, res) => {
     } = req.body || {};
 
     const updateFields = {};
-    if (full_name !== undefined) updateFields.full_name = full_name.trim();
-    if (phone !== undefined) updateFields.phone = phone.trim();
-    if (email !== undefined) updateFields.email = email.trim();
-    if (organization !== undefined) updateFields.organization = organization.trim();
-    if (purpose !== undefined) updateFields.purpose = purpose.trim();
-    if (host_name !== undefined) updateFields.host_name = host_name.trim();
-    if (id_proof_type !== undefined) updateFields.id_proof_type = id_proof_type;
-    if (id_proof_number !== undefined) updateFields.id_proof_number = id_proof_number.trim();
-    if (notes !== undefined) updateFields.notes = notes.trim();
+    if (full_name !== undefined) {
+      const trimmed = full_name.trim();
+      if (trimmed.length < 2 || trimmed.length > 100) {
+        return res.status(422).json({ detail: 'Full name must be between 2 and 100 characters' });
+      }
+      updateFields.full_name = trimmed;
+    }
+
+    if (phone !== undefined) {
+      const trimmed = phone.trim();
+      if (!/^\d{10}$/.test(trimmed)) {
+        return res.status(422).json({ detail: 'Phone number must be exactly 10 digits' });
+      }
+      if (trimmed !== existing.phone && existing.status === 'checked_in') {
+        const hasActive = await hasOpenCheckin(trimmed);
+        if (hasActive) {
+          return res.status(409).json({ detail: `A visitor with phone number ${trimmed} is already checked in` });
+        }
+      }
+      updateFields.phone = trimmed;
+    }
+
+    if (email !== undefined) {
+      const trimmed = email.trim();
+      if (trimmed && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+        return res.status(422).json({ detail: 'Invalid email address format' });
+      }
+      updateFields.email = trimmed || null;
+    }
+
+    if (organization !== undefined) {
+      updateFields.organization = organization.trim() || null;
+    }
+
+    if (purpose !== undefined) {
+      const trimmed = purpose.trim();
+      if (trimmed.length < 2 || trimmed.length > 200) {
+        return res.status(422).json({ detail: 'Purpose must be between 2 and 200 characters' });
+      }
+      updateFields.purpose = trimmed;
+    }
+
+    if (host_name !== undefined) {
+      const trimmed = host_name.trim();
+      if (trimmed.length < 2 || trimmed.length > 100) {
+        return res.status(422).json({ detail: 'Person to meet (host) must be between 2 and 100 characters' });
+      }
+      updateFields.host_name = trimmed;
+    }
+
+    if (id_proof_type !== undefined) {
+      if (!VALID_ID_TYPES.includes(id_proof_type)) {
+        return res.status(422).json({ detail: `ID proof type must be one of: ${VALID_ID_TYPES.join(', ')}` });
+      }
+      updateFields.id_proof_type = id_proof_type;
+    }
+
+    if (id_proof_number !== undefined) {
+      const trimmed = id_proof_number.trim();
+      if (trimmed.length < 3 || trimmed.length > 50) {
+        return res.status(422).json({ detail: 'ID proof number must be between 3 and 50 characters' });
+      }
+      updateFields.id_proof_number = trimmed;
+    }
+
+    if (notes !== undefined) {
+      const trimmed = notes.trim();
+      if (trimmed.length > 500) {
+        return res.status(422).json({ detail: 'Notes must not exceed 500 characters' });
+      }
+      updateFields.notes = trimmed || null;
+    }
 
     const updated = await updateVisitor(req.params.id, updateFields);
     res.json(updated);
